@@ -41,7 +41,7 @@ d-i passwd/username string aluno
 d-i passwd/user-password-crypted password $6$K0kuB1PeuXk6ZaKa$LitHRHUvI1XJ7mXY5Ia0XJJJjJ6I.P1HIB4FvsQSScRPcWfhFkuF/KQ2Q3Q2Eb9AY0UH1nkAY4VWTzTjcVdbm/
 
 ### --- Seleção de Pacotes (com XFCE) ---
-tasksel tasksel/first multiselect standard, kde-desktop
+tasksel tasksel/first multiselect standard, kde-plasma-desktop
 
 ### --- Bootloader GRUB ---
 d-i grub-installer/only_debian boolean true
