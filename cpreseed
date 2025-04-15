@@ -35,7 +35,8 @@ d-i apt-setup/non-free boolean true
 d-i apt-setup/contrib boolean true
 
 ### --- Usuário e Senha (criptografadas) ---
-d-i passwd/root-password-crypted password $6$K0kuB1PeuXk6ZaKa$LitHRHUvI1XJ7mXY5Ia0XJJJjJ6I.P1HIB4FvsQSScRPcWfhFkuF/KQ2Q3Q2Eb9AY0UH1nkAY4VWTzTjcVdbm/
+#d-i passwd/root-password-crypted password $6$K0kuB1PeuXk6ZaKa$LitHRHUvI1XJ7mXY5Ia0XJJJjJ6I.P1HIB4FvsQSScRPcWfhFkuF/KQ2Q3Q2Eb9AY0UH1nkAY4VWTzTjcVdbm/
+d-i passwd/root-password-crypted password $6$.tHfQ9ci9PGElVUe$93rDidcSLhYUyoZ9n10UUBquJvYhJX3cgDFL/xd5CPBO0ikMuUlCd4ZWys3zvEF1iB5GHYaD00JEFG6LBhSbr0
 d-i passwd/user-fullname string aluno
 d-i passwd/username string aluno
 d-i passwd/user-password-crypted password $6$K0kuB1PeuXk6ZaKa$LitHRHUvI1XJ7mXY5Ia0XJJJjJ6I.P1HIB4FvsQSScRPcWfhFkuF/KQ2Q3Q2Eb9AY0UH1nkAY4VWTzTjcVdbm/
