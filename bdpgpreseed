@@ -1,0 +1,89 @@
+### --- Localização e Idioma ---
+d-i debian-installer/language string pt_BR
+d-i debian-installer/country string BR
+d-i debian-installer/locale string pt_BR.UTF-8
+d-i keyboard-configuration/xkb-keymap select br
+
+### --- Configuração de Rede ---
+d-i netcfg/choose_interface select auto
+d-i netcfg/get_hostname string DebianEteGec
+d-i netcfg/get_domain string workgroup
+d-i netcfg/wireless_wep string
+
+### --- Mirror do Debian (Repositório) ---
+d-i mirror/country string manual
+d-i mirror/http/hostname string ftp.br.debian.org
+d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string
+
+### --- Fuso Horário e Relógio ---
+d-i clock-setup/utc boolean true
+d-i time/zone string America/Recife
+d-i clock-setup/ntp boolean true
+
+### --- Particionamento Automático ---
+d-i partman-auto/method string regular
+d-i partman-auto/choose_recipe select atomic
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman-md/confirm boolean true
+
+### --- Repositórios Adicionais (non-free e contrib) ---
+d-i apt-setup/non-free boolean true
+d-i apt-setup/contrib boolean true
+
+### --- Usuário e Senha (criptografadas) ---
+d-i passwd/root-password-crypted password $6$K0kuB1PeuXk6ZaKa$LitHRHUvI1XJ7mXY5Ia0XJJJjJ6I.P1HIB4FvsQSScRPcWfhFkuF/KQ2Q3Q2Eb9AY0UH1nkAY4VWTzTjcVdbm/
+d-i passwd/user-fullname string aluno
+d-i passwd/username string aluno
+d-i passwd/user-password-crypted password $6$K0kuB1PeuXk6ZaKa$LitHRHUvI1XJ7mXY5Ia0XJJJjJ6I.P1HIB4FvsQSScRPcWfhFkuF/KQ2Q3Q2Eb9AY0UH1nkAY4VWTzTjcVdbm/
+
+### --- Seleção de Pacotes ---
+tasksel tasksel/first multiselect standard, gnome-desktop
+d-i pkgsel/include string postgresql
+
+### --- Bootloader GRUB ---
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev string /dev/sda
+
+### --- Pós-instalação: configuração do PostgreSQL ---
+d-i preseed/late_command string \
+    in-target bash -c ' \
+    systemctl enable postgresql; \
+    systemctl start postgresql; \
+    sudo -u postgres psql <<EOF \
+-- Criação do banco de dados e usuário
+CREATE USER aluno WITH PASSWORD '\''aluno123'\'';
+CREATE DATABASE dbaluno OWNER aluno;
+GRANT ALL PRIVILEGES ON DATABASE dbaluno TO aluno;
+
+-- Conectar à base e criar a tabela
+\c dbaluno;
+CREATE TABLE IF NOT EXISTS tb_notas (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(50),
+  sobrenome VARCHAR(50),
+  nota1 DECIMAL(4,2),
+  nota2 DECIMAL(4,2),
+  nota3 DECIMAL(4,2)
+);
+
+-- Inserir alguns registros de exemplo
+INSERT INTO tb_notas (nome, sobrenome, nota1, nota2, nota3) VALUES
+('Ana', 'Silva', 8.5, 7.0, 9.0),
+('Bruno', 'Souza', 6.5, 8.0, 7.5),
+('Carlos', 'Pereira', 9.0, 8.5, 9.5),
+('Daniela', 'Oliveira', 7.0, 6.5, 8.0),
+('Eduardo', 'Lima', 5.5, 7.0, 6.0);
+
+-- Permissões para o usuário aluno
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO aluno;
+EOF \
+    '
+
+### --- Finalização ---
+d-i finish-install/reboot_in_progress note
